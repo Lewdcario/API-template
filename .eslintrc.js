@@ -3,6 +3,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'simple-import-sort', 'jquery'],
   rules: {
+    'no-bitwise': 'off',
     'no-continue': 'off',
     'no-process-env': 'off',
     'class-methods-use-this': 'off', // migrating away from classes anyways
@@ -25,6 +26,7 @@ module.exports = {
     'consistent-return': 'warn',
     'global-require': 'warn',
     'simple-import-sort/sort': 'error',
+    'max-depth': ['error', 6],
     'no-console': 'off',
     'no-await-in-loop': 'off',
     'no-restricted-syntax': 'off',

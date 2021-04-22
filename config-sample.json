@@ -1,0 +1,10 @@
+{
+	"token": "",
+	"guild": "",
+	"clientID": "",
+	"voiceflow": {
+		"version": "",
+		"key": ""
+	},
+	"database": "postgres://<user>:<pass>@<host>/<dbname>"
+}

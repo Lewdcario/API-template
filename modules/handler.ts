@@ -65,7 +65,7 @@ export default async function (
     if (session.finished) {
       output = ['The conversation has ended.'];
     } else if (!output.length) {
-      output = ['I did not recognise your input.']; // Fallback
+      output = ['I did not recognise your input. Please try something else.']; // Fallback, seems to happen when the input is misinterpreted
     }
 
     const suggestions = body.trace.filter((t) => t.type === 'choice').map((t) => (t as ChoiceTrace).payload?.choices?.map((c) => c.name));

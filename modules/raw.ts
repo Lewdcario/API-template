@@ -1,4 +1,4 @@
-import message from './message';
+import handler from './handler';
 
 const timeouts: TimeoutCache = {};
 
@@ -15,7 +15,8 @@ export default async function (client: any, packet: any): Promise<any> {
       // Acknowledge the interaction as a "Thinking..." response
       await client.api.interactions[packet.d.id][packet.d.token].callback.post({ data: { type: 5 } });
 
-      const { output, suggestions } = await message(packet.d.member.user.id, packet.d.guild_id, packet.d.data.options[0].value);
+      // Empty query is recommended to start
+      const { output, suggestions } = await handler(packet.d.member.user.id, packet.d.guild_id, packet.d.data.options?.[0].value || '');
 
       if (output.every((i) => i?.length)) {
         for (const response of output) {
@@ -38,7 +39,7 @@ export default async function (client: any, packet: any): Promise<any> {
     } catch (err) {
       console.warn('Error with chat interaction', err);
       return client.api.webhooks[packet.d.application_id][packet.d.token].post({
-        data: { content: 'Something went wrong... Pleae try again.', flags: 64 },
+        data: { content: 'Something went wrong... Please try again.', flags: 64 },
       });
     }
   }

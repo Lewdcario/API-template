@@ -16,7 +16,7 @@ const data = {
       name: 'input',
       type: 3, // 'STRING'
       description: 'The query to start or continue the conversation',
-      required: true,
+      required: false,
     },
   ],
 };

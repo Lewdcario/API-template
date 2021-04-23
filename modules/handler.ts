@@ -24,7 +24,7 @@ export default async function (
   query: string
 ): Promise<{ output: (string | undefined)[]; suggestions?: (string[] | undefined)[] }> {
   try {
-    const [session] = await Session.findOrCreate({
+    const [session, created] = await Session.findOrCreate({
       where: { userID, guildID, finished: false },
       defaults: { userID, guildID, state: {} },
     });
@@ -38,11 +38,21 @@ export default async function (
       body: JSON.stringify({
         request: {
           type: 'text',
-          payload: query,
+          payload: created ? '' : query, // Should force empty query to get the starter message, otherwise the conversation will skip oddly
         },
         state: session.state,
       }),
-    }).then((r) => r.json());
+    })
+      .then((r) => r.json())
+      .catch((e) => {
+        console.warn('Error running request', e);
+        return null;
+      });
+
+    if (!body) {
+      return { output: ['There was an error creating a response. Please try again.'] };
+    }
+
     session.state = body.state;
 
     if (body.trace.some((node) => node.type === 'end')) {
@@ -54,7 +64,9 @@ export default async function (
     let output = body.trace.filter((t) => t.type === 'speak').map((t) => (t as SpeakTrace).payload?.message.replace(/(<([^>]+)>)/gi, ''));
     if (session.finished) {
       output = ['The conversation has ended.'];
-    } else if (!output.length) output = ['I did not recognise your input.']; // Fallback
+    } else if (!output.length) {
+      output = ['I did not recognise your input.']; // Fallback
+    }
 
     const suggestions = body.trace.filter((t) => t.type === 'choice').map((t) => (t as ChoiceTrace).payload?.choices?.map((c) => c.name));
 
